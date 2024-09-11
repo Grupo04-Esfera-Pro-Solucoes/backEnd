@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Esfera pró soluções</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="icon" th:href="@{/img/esferaIcon.ico}" type="image/x-icon">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../style/config.css">
+    <link rel="stylesheet" href="../style/nav.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script th:src="@{/js/main.js}" type="text/javascript"></script>
+    <script th:src="@{/js/config.js}" type="text/javascript"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="bg-[#DCDCDC] flex overflow-hidden h-screen w-screen">
+<div th:replace="~{menu-component :: navbar-component}"></div>
+<div th:replace="~{menu-component :: sidebar-component(selectedScreen=${selectedScreen})}"></div>
+<div class="flex overflow-hidden w-full bg-[#fff] select-none overflow-y-auto">
+    <div class="w-full mt-[61px]">
+        <h1 class='text-2xl font-semibold p-4 mb-2'>Configurações</h1>
+        <ul class='flex items-center px-4 text-secondary'>
+            <li
+                    class="li-perfil px-8 cursor-pointer ease-in-out text-purple-contrast font-bold border-b-2 border-violet-contrast"
+                    onclick="togglePerfil()">
+                Perfil
+            </li>
+            <li class="li-ajuda px-8 cursor-pointer ease-in-out" onclick="toggleAjuda()">Ajuda</li>
+        </ul>
+        <div class='w-full  mt-4 flex flex-col px-8'>
+            <div class="perfil active">
+                <form action="/atualizarUsuario" method="POST" id="userForm">
+                    <div class='w-full flex justify-between border-b-2 border-gray-100 py-4 sticky-header'>
+                        <div>
+                            <h2 class='text-xl font-semibold'>Informações pessoais</h2>
+                            <p class='text-secondary'>Atualize suas informações pessoais.</p>
+                        </div>
+                        <div id="updateMessage" style="display: none;"></div>
+                        <div class='flex items-center'>
+                            <!-- <button class='bg-[#fff] text-primary border-checkbox border-2 px-8 py-1 rounded-lg mr-4 font-semibold hover:bg-defaultBg duration-150 ease-in-out'>
+                                Cancelar
+                            </button> -->
+                            <button type="button" onclick="updateUser()" class="bg-purple-highlight text-white px-8 py-1 rounded-lg font-semibold hover:bg-[#5f04c4] duration-150 ease-in-out cursor-pointer">
+                                Salvar
+                            </button>
+                        </div>
+                    </div>
+                    <div class='w-full flex justify-between border-b-2 border-gray-100 py-4'>
+                        <div class='w-full'>
+                            <h2 class='text-xl font-semibold'>Nome</h2>
+                            <p class='text-secondary'>Esse nome será exibido no seu perfil.</p>
+                        </div>
+                        <div class='w-full'>
+                            <input type="text" name="name" id="name" placeholder='Digite seu nome' class="
+                  w-full p-2 my-2 rounded-md border border-gray-300 shadow-md focus:outline-none
+                  focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                  disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                  invalid:text-pink-600
+                  focus:invalid:border-pink-500 focus:invalid:ring-pink-500"/>
+                        </div>
+                        <div class='w-full'></div>
+                    </div>
+                    <div class='w-full flex justify-between border-b-2 border-gray-100 py-4'>
+                        <div class='w-full'>
+                            <h2 class='text-xl font-semibold'>Email</h2>
+                            <p class='text-secondary'>Esse e-mail será usado para fazer login.</p>
+                        </div>
+                        <div class='w-full'>
+                            <input type="email" name="email" id="email" placeholder='Digite seu email' class="
+                  w-full p-2 my-2 rounded-md border border-gray-300 shadow-md focus:outline-none
+                  focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                  disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                  invalid:text-pink-600
+                  focus:invalid:border-pink-500 focus:invalid:ring-pink-500"/>
+                        </div>
+                        <div class='w-full'></div>
+                    </div>
+                    <div class='w-full flex justify-between border-b-2 border-gray-100 py-4'>
+                        <div class='w-full'>
+                            <h2 class='text-xl font-semibold'>Cargo</h2>
+                            <p class='text-secondary'>Essa é sua função dentro da empresa.</p>
+                        </div>
+                        <div class='w-full'>
+                            <input type="text" name="role" id="role" placeholder='Digite seu cargo' class="
+                  w-full p-2 my-2 rounded-md border border-gray-300 shadow-md focus:outline-none
+                  focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                  disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                  invalid:text-pink-600
+                  focus:invalid:border-pink-500 focus:invalid:ring-pink-500"/>
+                        </div>
+                        <div class='w-full'></div>
+                    </div>
+                    <div class='w-full flex justify-between border-b-2 border-gray-100 py-4'>
+                        <div class='w-full'>
+                            <h2 class='text-xl font-semibold'>Telefone</h2>
+                        </div>
+                        <div class='w-full'>
+                            <input type="number" name="phone" id="phone" placeholder='Digite seu telefone' class="
+                  w-full p-2 my-2 rounded-md border border-gray-300 shadow-md focus:outline-none
+                  focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                  disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                  invalid:text-pink-600
+                  focus:invalid:border-pink-500 focus:invalid:ring-pink-500"/>
+                        </div>
+                        <div class='w-full'></div>
+                    </div>
+                    <div class='w-full flex justify-between border-b-2 border-gray-100 py-4'>
+                        <div class='w-full'>
+                            <h2 class='text-xl font-semibold'>Alterar senha</h2>
+                        </div>
+                        <div class='w-full'>
+                            <input type="password" name="password" id="password" placeholder='Digite sua senha (Obrigatório para alterar dados)'
+                                   class="
+                  w-full p-2 my-2 rounded-md border border-gray-300 shadow-md focus:outline-none
+                  focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                  disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                  invalid:text-pink-600
+                  focus:invalid:border-pink-500 focus:invalid:ring-pink-500"/>
+                            <input type="password" name="newPassword" id="newPassword" placeholder='Digite a nova senha'
+                                   class="
+                  w-full p-2 my-2 rounded-md border border-gray-300 shadow-md focus:outline-none
+                  focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                  disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                  invalid:text-pink-600
+                  focus:invalid:border-pink-500 focus:invalid:ring-pink-500"/>
+                            <input type="password" name="repeatNewPassword" id="repeatNewPassword"
+                                   placeholder='Repita a nova senha' class="
+                  w-full p-2 my-2 rounded-md border border-gray-300 shadow-md focus:outline-none
+                  focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                  disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                  invalid:text-pink-600
+                  focus:invalid:border-pink-500 focus:invalid:ring-pink-500"/>
+                        </div>
+                        <div class='w-full'></div>
+                    </div>
+                    <div class='w-full flex justify-between border-b-2 border-gray-100 py-4'>
+                        <div class='w-full'>
+                            <h2 class='text-xl font-semibold'>Foto de perfil</h2>
+                            <p class='text-secondary'>Esta foto será utilizada em seu perfil pessoal.</p>
+                        </div>
+                        <div class='w-full '>
+                            <input type="file" name="profilePicture" id="profilePicture" class="w-full border-2 py-12 cursor-pointer file:block file:text-center file:justify-center file:hover:bg-defaultBg file:duration-300 file:ease-in-out file:mx-auto file:py-2 file:px-4
+            file:rounded-full file:border-0
+            file:text-sm file:font-semibold
+            file:bg-violet-50 file:text-violet-700
+            hover:file:bg-violet-100"/>
+                        </div>
+                        <div class='w-full'></div>
+                    </div>
+                </form>
+            </div>
+            <div class="ajuda hidden">
+                <h1 class='font-semibold p-4 text-3xl'>Perguntas frequentes</h1>
+                <hr/>
+                <div class='px-[20%] py-5'>
+                    <h2 class='text-xl font-semibold border-b-2 py-2 px-8 bg-gray-50 rounded-t-lg'
+                        onclick="toggleAcordion('alterarSenha')">
+                        Como
+                        alterar a senha?
+                    </h2>
+                    <p class='text-secondary bg-gray-100 hidden px-8 py-4' id="alterarSenha">Para alterar a senha, vá
+                        até a
+                        aba de
+                        configurações
+                        e clique em
+                        "Alterar senha".</p>
+                    <h2 class='text-xl font-semibold border-b-2 py-2 px-8 bg-gray-50 rounded-t-lg'
+                        onclick="toggleAcordion('alterarSenha2')">
+                        Como
+                        alterar a senha?
+                    </h2>
+                    <p class='text-secondary bg-gray-100 hidden px-8 py-4' id="alterarSenha2">Para alterar a senha, vá
+                        até a
+                        aba de
+                        configurações
+                        e clique em
+                        "Alterar senha".</p>
+                    <h2 class='text-xl font-semibold border-b-2 py-2 px-8 bg-gray-50 rounded-t-lg'
+                        onclick="toggleAcordion('alterarSenha3')">
+                        Como
+                        alterar a senha?
+                    </h2>
+                    <p class='text-secondary bg-gray-100 hidden px-8 py-4' id="alterarSenha3">Para alterar a senha, vá
+                        até a
+                        aba de
+                        configurações
+                        e clique em
+                        "Alterar senha".</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

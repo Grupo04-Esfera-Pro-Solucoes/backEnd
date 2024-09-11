@@ -1,0 +1,60 @@
+:root {
+    --purple-contrast: #3D0053;
+}
+
+/* Path: nav.css */
+.purple-contrast {
+    color: var(--purple-contrast);
+}
+
+.bg-purple-contrast {
+    background-color: var(--purple-contrast);
+}
+
+.text-amber {
+    color: #F7BD2E;
+}
+
+
+.sidebar.active {
+    width: 78px;
+
+}
+
+.sidebar.active span {
+    display: none;
+}
+
+.text-primary {
+    color: #101828;
+}
+
+.text-secondary {
+    color: #344054;
+}
+
+.text-purple-contrast {
+    color: #3D0053;
+}
+
+
+.bg-purple-highlight {
+    background-color: #6502D4;
+}
+
+.border-violet-contrast {
+    border-color: #3D0053;
+}
+
+.bg-defaultBg {
+    background-color: #DCDCDC;
+}
+
+.bg-defaultBg:hover {
+    background-color: #DCDCDC;
+}
+
+
+.bg-purple-highlight {
+    background-color: #6502D4;
+}

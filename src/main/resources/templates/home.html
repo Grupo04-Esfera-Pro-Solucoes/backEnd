@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Esfera pró soluções</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" th:href="@{/img/esferaIcon.ico}" type="image/x-icon">
+
+    <link rel="stylesheet" href="../style/nav.css">
+    <link rel="stylesheet" href="../style/home.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script th:src="@{/js/main.js}" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="bg-[#DCDCDC] flex overflow-hidden h-screen w-screen">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+    <div th:replace="~{menu-component :: navbar-component}"></div>
+    <div th:replace="~{menu-component :: sidebar-component(selectedScreen=${selectedScreen})}"></div>
+
+    <main style="display: flex; flex-direction: column; padding-top: 61px; width: 100%;">
+        <div style="display: flex; justify-content: space-between; width: 100%; flex-grow: 1;">
+            <div class="shadow-sm" style="background-color: white; flex-grow: 1; width: 33.3%; margin-top: 10px; margin-right: 5px; margin-bottom: 5px; margin-left: 10px; border-radius: 10px; height: 215px;">
+                <canvas id="lineChart1" style="width: 100%; height: 85%;"></canvas>
+                <p id="crescimento-ligacoes" style="text-align: center; height: 15%;">+0% em comparação ao mês anterior</p>
+            </div>
+            <div class="shadow-sm" style="background-color: white; flex-grow: 1; width: 33.3%; margin-top: 10px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; border-radius: 10px; height: 215px;">
+                <canvas id="lineChart2" style="width: 100%; height: 85%;"></canvas>
+                <p id="crescimento-propostas" style="text-align: center; height: 15%;">+0% em comparação ao mês anterior</p>
+            </div>
+            <div id="faturamento-container" class="shadow-sm" style="background-color: white; flex-grow: 1; width: 33.3%; margin-top: 10px; margin-right: 10px; margin-bottom: 5px; margin-left: 5px;  border-radius: 10px; height: 215px;">
+                <b><p style="text-align: center; height: 33.3%; line-height: 100px;">Faturamento Mensal</p></b>
+                <b><p id="faturamento-total" style="font-size: 50px; text-align: center; height: 33.3%;">R$0.00</p></b>
+                <p id="faturamento-crescimento" style="text-align: center; height: 33.3%;">+0% em comparação ao mês anterior</p>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; width: 100%; flex-grow: 1;">
+            <div class="shadow-sm" style="background-color: white; flex-grow: 1; width: 33.3%; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 10px; border-radius: 10px; height: 215px;">
+                <div class="w-full h-full flex flex-col justify-between bg-white">
+                    <div class="w-full flex justify-between px-2 py-1">
+                        <h2 class="text-semibold text-lg">Total de Ligações</h2>
+                        <p class="text-sm">Semanal</p>
+                    </div>
+                    <div class="flex justify-between w-full h-full gap-x-2">
+                        <div id="leadCounterBar" class="flex flex-col h-full w-full px-2 text-center justify-between pb-1">
+                        </div>
+                        <div id="itensRowBarGraph" class="w-full h-full flex items-center gap-x-4 text-center">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div  class="shadow-sm" style="background-color: white; flex-grow: 1; width: 33.3%; margin: 5px 5px; border-radius: 10px; height: 215px; display: flex; justify-content: center;">
+                <canvas id="pieChart1" style="width: 80%; height: 80%;"></canvas>
+                <b><p id="totalProposals" style="line-height: 200px; margin-left: 10px;">0 Propostas</p></b>
+                <select name="" id="periodSelect">
+                    <option value="all">Tudo</option>
+                    <option value="day">Diário</option>
+                    <option value="week">Semanal</option>
+                    <option value="month">Mensal</option>
+                </select>
+            </div>
+            <div class="shadow-sm" style="background-color: white; flex-grow: 1; width: 33.3%; margin: 5px 5px; margin-right: 10px; border-radius: 10px; height: 215px; display: flex; justify-content: center;">
+                <canvas id="pieChart2" style="width: 80%; height: 80%;"></canvas>
+                <b><p id="totalCalls" style="line-height: 200px; margin-left: 10px;">0 Ligações</p></b>
+                <select name="" id="periodSelectCalls">
+                    <option value="all">Tudo</option>
+                    <option value="day">Diário</option>
+                    <option value="week">Semanal</option>
+                    <option value="month">Mensal</option>
+                </select>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; width: 100%; flex-grow: 1;">
+            <div class="shadow-sm" style="background-color: white; flex-grow: 1; margin-top: 5px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; border-radius: 10px; height: 215px;">
+                <div class="container">
+                    <div class="task-column overflow-x-hidden" style="border-top-left-radius: 10px; border-bottom-left-radius: 10px;" ondrop="drop(event, 'todo-list')" ondragover="allowDrop(event)">
+                        <h2 class="bg-purple-contrast text-white font-semibold px-4 py-2">A Fazer</h2>
+                        <ul id="todo-list" class="task-list mx-2 py-2 text-ellipsis overflow-x-hidden ..." data-status="todo-list"></ul>
+                    </div>
+                    <div class="task-column overflow-x-hidden" ondrop="drop(event, 'inprogress-list')" ondragover="allowDrop(event)">
+                        <h2 class="bg-purple-contrast text-white font-semibold px-4 py-2">Em Progresso</h2>
+                        <ul id="inprogress-list" class="task-list mx-2 py-2 text-ellipsis overflow-x-hidden ..." data-status="inprogress-list"></ul>
+                    </div>
+                    <div class="task-column overflow-x-hidden" style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;" ondrop="drop(event, 'done-list')" ondragover="allowDrop(event)">
+                        <h2 class="bg-purple-contrast text-white font-semibold px-4 py-2">Concluído</h2>
+                        <ul id="done-list" class="task-list mx-2 py-2 text-ellipsis overflow-x-hidden ..." data-status="done-list"></ul>
+                    </div>
+                </div>
+                <button id="add-task-btn" class="btn-add-task">Adicionar Tarefa</button>
+            </div>
+        </div>
+        <div id="add-task-form-container" class="task-form" style="display: none;">
+            <b><h2 style="text-align: center;">Adicionar Tarefa</h2></b>
+            <form id="task-form">
+                <label for="task-name">Nome da Tarefa:</label>
+                <input type="text" id="task-name" name="task-name" required>
+                <label for="task-description">Descrição:</label>
+                <textarea id="task-description" name="task-description" rows="4" required></textarea>
+                <label for="due-date">Data de Vencimento:</label>
+                <input type="date" id="due-date" name="due-date" required>
+                <button type="submit">Adicionar</button>
+            </form>
+        </div>
+        <div id="edit-task-form-container" class="edit-task-form" style="display: none;">
+            <b><h2 style="text-align: center;">Editar Tarefa</h2></b>
+            <form id="edit-task-form">
+                <input type="hidden" id="edit-task-id" name="edit-task-id">
+                <label for="edit-task-name">Nome da Tarefa:</label>
+                <input type="text" id="edit-task-name" name="edit-task-name" required>
+                <label for="edit-task-description">Descrição:</label>
+                <textarea id="edit-task-description" name="edit-task-description" rows="4" required></textarea>
+                <label for="edit-due-date">Data de Vencimento:</label>
+                <input type="date" id="edit-due-date" name="edit-due-date" required>
+                <button type="button" onclick="submitEditForm()">Salvar</button>
+            </form>
+        </div>
+    </main>
+    <script th:src="@{/js/home.js}" type="text/javascript"></script>
+</body>
+
+</html>

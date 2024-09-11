@@ -1,0 +1,123 @@
+<nav class="bg-[#fff] px-4 select-none w-full shadow-sm fixed top-0 z-40 flex justify-between items-center"
+     th:fragment="navbar-component">
+    <div onclick="toggleSidebar()">
+        <ion-icon name="menu" fontSize=""
+                  class="text-3xl text-purple-contrast cursor-pointer hover:text-purple-800 ml-[8px]"></ion-icon>
+    </div>
+    <div class="flex justify-end ">
+        <div id="dropdownHeader" class="flex items-center mt-1 pt-1 pb-2 px-8 rounded-t-xl w-[243px]">
+            <!-- <div class=" flex items-center mr-4 hover:text-slate-600 cursor-pointer text-primary">
+                <ion-icon name="settings" class="text-2xl"></ion-icon>
+            </div> -->
+            <div id="dropdownMain" class="flex items-center mr-8 cursor-pointer text-primary hover:text-slate-600"
+                 onclick="toggleDropdown()">
+                <ion-icon name="person-circle" class="text-[45px]"></ion-icon>
+                <div class="flex flex-col text-justify ml-2">
+                    <h2 id="userNameDisplay" class="font-semibold text-xl mb-0 pb-0 capitalize truncate ..."></h2>
+                    <p id="userRoleDisplay" class="text-secondary italic text-xs mt-0 pt-0 capitalize"></p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute md:mt-[60px] right-4 bg-[#fff] hidden rounded-b-lg shadow-lg pb-2 dropdown w-[243px]">
+            <ul class="text-purple-contrast w-full">
+                <li class="hover:bg-purple-800 w-full text-black hover:text-white">
+                    <a href="/nav/configuration"
+                       class="cursor-pointer  w-full  select-none flex items-center px-8 py-2">
+                        <span class="">Configurações de perfil</span>
+                    </a>
+                </li>
+                <li class="hover:bg-purple-800 w-full text-black hover:text-white">
+                    <a onClick="logout()"
+                       class="cursor-pointer  w-full  select-none flex items-center px-8 py-2">
+                        <span class="">Sair</span>
+                    </a>
+                </li>
+                <li class="hover:bg-purple-800 w-full text-black hover:text-white">
+                    <a onclick="setShowHelpFlagAndRedirect()"
+                       class="cursor-pointer  w-full  select-none flex items-center px-8 py-2">
+                        <span class="">Obter ajuda</span>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class='bg-[#fff] sticky left-0 top-0 h-screen w-1/5 shadow-md ease-in-out duration-150 select-none sidebar'
+     th:fragment="sidebar-component">
+    <nav class='flex flex-col pt-[61px] justify-between h-full'>
+        <div class='flex flex-col items-center px-2 py-2'>
+            <a href="/nav/dashboard"
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out bg-purple-contrast text-white'
+               th:if="${selectedScreen == 'dashboard'}">
+                <ion-icon name="home" fontSize='' class='text-3xl text-amber'></ion-icon>
+                <span class='ml-3'>Dashboard</span>
+            </a>
+            <a href="/nav/dashboard"
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out'
+               th:unless="${selectedScreen == 'dashboard'}">
+                <ion-icon name="home" fontSize='' class='text-3xl'></ion-icon>
+                <span class='ml-3'>Dashboard</span>
+            </a>
+
+            <a href="/nav/client"
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out bg-purple-contrast text-white'
+               th:if="${selectedScreen == 'client'}">
+                <ion-icon name="people" fontSize='' class='text-3xl text-amber'></ion-icon>
+                <span class='ml-3'>Clientes</span>
+            </a>
+            <a href="/nav/client"
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out'
+               th:unless="${selectedScreen == 'client'}">
+                <ion-icon name="people" fontSize='' class='text-3xl'></ion-icon>
+                <span class='ml-3'>Clientes</span>
+            </a>
+            <a href="/nav/lead"
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out bg-purple-contrast text-white'
+               th:if="${selectedScreen == 'lead'}">
+                <ion-icon name="call" fontSize='' class='text-3xl text-amber'></ion-icon>
+                <span class='ml-3'>Ligações</span>
+            </a>
+            <a href="/nav/lead"
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out'
+               th:unless="${selectedScreen == 'lead'}">
+                <ion-icon name="call" fontSize='' class='text-3xl'></ion-icon>
+                <span class='ml-3'>Ligações</span>
+            </a>
+
+            <a href="/nav/proposal"
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out bg-purple-contrast text-white'
+               th:if="${selectedScreen == 'proposal'}">
+                <i class="fa-regular fa-handshake text-3xl text-amber"></i>
+                <span class='ml-3'>Propostas</span>
+            </a>
+            <a href="/nav/proposal"
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out'
+               th:unless="${selectedScreen == 'proposal'}">
+                <i class="fa-regular fa-handshake text-3xl"></i>
+                <span class='ml-3'>Propostas</span>
+            </a>
+            <a href='/nav/configuration'
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out bg-purple-contrast text-white'
+               th:if="${selectedScreen == 'configuration'}">
+                <ion-icon name="settings" fontSize='' class='text-3xl text-amber'></ion-icon>
+                <span class='ml-3'>Configurações</span>
+            </a>
+            <a href='/nav/configuration'
+               class='w-full flex items-center py-4 px-4 rounded-2xl text-purple-contrast font-bold my-2 cursor-pointer hover:shadow-md duration-300 ease-in-out'
+               th:unless="${selectedScreen == 'configuration'}">
+                <ion-icon name="settings" fontSize='' class='text-3xl'></ion-icon>
+                <span class='ml-3'>Configurações</span>
+            </a>
+        </div>
+        <div>
+            <hr>
+            <div class='text-[#98A2B3] text-center py-4 hover:text-gray-600 ease-in-out duration-150 cursor-pointer'
+                 onclick="setShowHelpFlagAndRedirect()">
+                <ion-icon name="help-circle" fontSize='' class='text-xl mr-2'></ion-icon>
+                <span class=''>Ajuda</span>
+            </div>
+        </div>
+    </nav>
+</div>

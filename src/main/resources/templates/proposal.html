@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html ang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Esfera pró soluções</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" th:href="@{/img/esferaIcon.ico}" type="image/x-icon">
+
+    <link rel="stylesheet" href="../style/nav.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script th:src="@{/js/main.js}" type="text/javascript"></script>
+    <script th:src="@{/js/proposal.js}" type="text/javascript"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+    <script src="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js
+"></script>
+    <link href="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css
+" rel="stylesheet">
+</head>
+
+<body class="bg-[#DCDCDC] flex overflow-hidden h-screen w-scren">
+<div th:replace="~{menu-component :: navbar-component}"></div>
+<div th:replace="~{menu-component :: sidebar-component(selectedScreen=${selectedScreen})}"></div>
+
+<div class="w-full h-full pt-[60px] overflow-auto">
+    <div class="flex justify-between items-center px-8 py-4 bg-white">
+        <h1 class="text-xl font-bold text-primary">Propostas</h1>
+        <div class="flex items-center w-[540px]">
+            <input type="text" placeholder="Digite o nome do cliente"
+                   id="searchProposal"
+                   class="w-full bg-[#F0F0F7] px-3 py-2 rounded-full focus:outline-none mr-[-30px] focus:bg-gray-200">
+            <ion-icon name="search-outline" fontSize=''
+                      class='text-lg text-black cursor-pointer hover:text-gray-600 duration-150 ease-in-out'
+                      onClick="fetchSearchProposalByClientName(0)"></ion-icon>
+        </div>
+        <button
+                class="bg-gray-100 text-black px-4 py-1 rounded-lg flex items-center font-semibold border hover:bg-gray-200 duration-150" onclick="exportProposals()">
+            <ion-icon name="download" fontSize='' class="text-lg text-black cursor-pointer pr-2"></ion-icon>
+            Exportar
+        </button>
+    </div>
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 table-fixed" id="tableProposals">
+        <thead class="text-xs text-primary uppercase bg-[#F9FAFB]">
+        <tr>
+            <th scope="col" class="pl-6 py-3" style="width: 50px;">
+                ID
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Cliente
+            </th>
+            <th scope="col" class="px-6 py-3">
+                CPF / CNPJ
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Serviço
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Status
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Descrição
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Data
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Valor
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Anexo
+            </th>
+            <th scope="col" class="px-6 py-3" >
+                Ações
+            </th>
+        </tr>
+        </thead>
+        <tbody class="overscroll-contain">
+        </tbody>
+    </table>
+    <div id="pagination"
+         class="sticky bottom-0 w-full bg-gray-200 py-2 flex items-center justify-between shadow-sm"></div>
+    <div id="cadProposal" class="w-screen h-screen absolute top-0 left-0 hidden">
+        <div onClick="handleCloseAddProposal()" class="bg-black bg-opacity-50 w-full h-full absolute top-0 left-0 z-40"></div>
+        <form action="" method="post"
+              class="bg-white w-[1000px] h-[560px] overflow-auto top-1/2 left-1/2 absolute transform z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-lg"
+              onSubmit="fetchAddProposal(event)">
+            <h1 class="bg-purple-contrast text-white px-4 py-2 font-semibold"> Cadastro de Proposta</h1>
+            <ion-icon name="close" fontSize=''
+                      class="text-2xl text-black absolute top-2 right-2 cursor-pointer hover:text-white-600 duration-150 ease-in-out text-white"
+                      onClick="handleCloseAddProposal()"></ion-icon>
+
+            <div class="flex justify-between py-2">
+                <div class="flex flex-col justify-between">
+                    <div class="flex justify-between">
+                        <div class="w-full mx-2 h-full">
+                            <label for="idLead" class="text-sm font-semibold">ID LIGAÇÃO<span
+                                    class="text-red-600">*</span></label> <br>
+                            <input type="number" name="idLead" id="idLead" placeholder="ID da ligação" required
+                                   class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[160px]">
+                            <button type="button"
+                                    class="bg-gray-200 text-black px-2 py-1 rounded-lg font-semibold ml-2"
+                                    onClick="fetchSearchProposalByName()">Enviar
+                            </button>
+
+                            <label for="date" class="text-sm font-semibold">Data de Conclusão<span class="text-red-600">*</span></label>
+                            <br>
+                            <input type="date" name="date" id="date" placeholder="Data da proposta" required
+                                   class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[250px]">
+
+                            <label for="value" class="text-sm font-semibold">Valores</label> <br>
+                            <input type="number" name="value" id="value" placeholder="R$ 9.999,99"
+                                   class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[250px]">
+                        </div>
+
+                        <div class="w-full mx-2 h-full">
+                            <label for="idClient" class="text-sm font-semibold mr-9">ID<span
+                                    class="text-red-600">*</span></label>
+                            <label for="name" class="text-sm font-semibold">Nome</label> <br>
+                            <input type="number" name="idClient" id="idClient" placeholder="ID" required disabled
+                                   class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[50px]"
+                                   >
+                            <input type="text" name="name" id="name" placeholder="Nome do cliente" disabled
+                                   class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[160px]"
+                                   > <br>
+
+                            <label for="service" class="text-sm font-semibold">Tipo de Solução</label><br>
+                            <select name="service" id="service"
+                                    class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[250px]">
+                                <option value="" selected disabled>Escolha uma solução</option>
+                                <option value="Acompanhamento">Acompanhamento</option>
+                                <option value="Consultoria">Consultoria</option>
+                                <option value="Treinamento">Treinamento</option>
+                            </select>
+
+                            <label for="status" class="text-sm font-semibold">Status da Proposta<span class="text-red-600">*</span></label><br>
+                            <select name="status" id="status" required
+                                    class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[250px]">
+                                <option value="" selected disabled>Escolha um status</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="mx-2">
+                        <label for="file" class="text-sm font-semibold">Anexar Arquivo</label> <br>
+                        <input type="file" name="profilePicture" id="file" accept=".pdf"
+                               class="w-full border-2 py-12 cursor-pointer
+                    file:block file:text-center
+                    file:justify-center file:hover:bg-defaultBg
+                    file:duration-300 file:ease-in-out
+                    file:mx-auto file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-violet-50 file:text-violet-700
+                    hover:file:bg-violet-100"/>
+                    </div>
+                </div>
+
+                <div class="w-full mx-2">
+                    <label for="description" class="text-sm font-semibold">Descrição da Proposta</label> <br>
+                    <textarea placeholder="Informações da proposta" name="description" id="description"
+                              class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 hover:bg-gray-200 duration-150 w-[450px] h-[400px]"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-between py-2">
+                <div class="float-right py-2 flex mx-2 ml-auto">
+                    <input type="submit"
+                           class="bg-purple-contrast text-white px-4 py-2 rounded-lg font-semibold cursor-pointer mr-2"
+                           value="Salvar">
+                    <div class="bg-gray-200 text-black px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                         onClick="handleCloseAddProposal()">Cancelar
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="editProposal" class="w-screen h-screen absolute top-0 left-0 hidden">
+    <div onClick="handleCloseEditProposal()" class="bg-black bg-opacity-50 w-full h-full absolute top-0 left-0 z-40"></div>
+
+    <form action="" method="post"
+          class="bg-white w-[1000px] h-[560px] overflow-auto top-1/2 left-1/2 absolute transform z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-lg"
+          onSubmit="fetchAddEditProposal(event)">
+        <h1 class="bg-purple-contrast text-white px-4 py-2 font-semibold"> Editar Proposta</h1>
+        <ion-icon name="close" fontSize=''
+                  class="text-2xl text-black absolute top-2 right-2 cursor-pointer hover:text-white-600 duration-150 ease-in-out text-white"
+                  onClick="handleCloseEditProposal()"></ion-icon>
+
+        <div class="flex justify-between py-2">
+            <div class="flex flex-col justify-between">
+                <div class="flex justify-between">
+                    <div class="w-full mx-2 h-full">
+                        <label for="idLeadEdit" class="text-sm font-semibold">ID LIGAÇÃO<span
+                                class="text-red-600">*</span></label> <br>
+                        <input type="number" name="idLeadEdit" id="idLeadEdit" placeholder="ID da ligação" required
+                               class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[160px]"
+                               > <br>
+
+                        <label for="date" class="text-sm font-semibold">Data de Conclusão</label> <br>
+                        <input type="date" name="date" id="dateEdit" placeholder="Data da proposta"
+                               class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[250px]">
+
+                        <label for="valueEdit" class="text-sm font-semibold">Valores</label> <br>
+                        <input type="number" name="valueEdit" id="valueEdit" placeholder="R$ 9.999,99"
+                               class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[250px]">
+                    </div>
+
+                    <div class="w-full mx-2 h-full">
+                        <label for="idClientEdit" class="text-sm font-semibold mr-9">ID</label>
+                        <label for="nameEdit" class="text-sm font-semibold">Nome</label> <br>
+                        <input type="number" name="idClient" id="idClientEdit" placeholder="ID" disabled
+                               class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[50px]"
+                               >
+                        <input type="text" name="name" id="nameEdit" placeholder="Nome do cliente" disabled
+                               class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[160px]"
+                               > <br>
+
+
+                        <label for="serviceEdit" class="text-sm font-semibold">Tipo de Solução</label><br>
+                        <select name="serviceEdit" id="serviceEdit"
+                                class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[250px]">
+                            <option value="Acompanhamento">Acompanhamento</option>
+                            <option value="Consultoria">Consultoria</option>
+                            <option value="Treinamento">Treinamento</option>
+                        </select>
+
+                        <label for="statusEdit" class="text-sm font-semibold">Status da Proposta</label><br>
+                        <select name="statusEdit" id="statusEdit"
+                                class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 w-[250px]">
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="mx-2">
+                    <label for="fileEdit" class="text-sm font-semibold">Anexar Arquivo</label> <br>
+                    <input type="file" name="profilePicture" id="fileEdit"
+                           accept=".pdf"
+                           class="w-full border-2 py-12 cursor-pointer
+                    file:block file:text-center
+                    file:justify-center file:hover:bg-defaultBg
+                    file:duration-300 file:ease-in-out
+                    file:mx-auto file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-violet-50 file:text-violet-700
+                    hover:file:bg-violet-100"/>
+                </div>
+            </div>
+
+            <div class="w-full mx-2">
+                <label for="description" class="text-sm font-semibold">Descrição da Proposta</label> <br>
+                <textarea placeholder="Informações da proposta" name="description" id="descriptionEdit"
+                          class="p-1 rounded-lg border-2 border-gray-200 focus:outline-none bg-[#F0F0F7] focus:bg-gray-200 hover:bg-gray-200 duration-150 w-[450px] h-[400px]"></textarea>
+            </div>
+        </div>
+
+        <div class="flex justify-between py-2">
+            <div class="float-right py-2 flex mx-2 ml-auto">
+                <input type="submit"
+                       class="bg-purple-contrast text-white px-4 py-2 rounded-lg font-semibold cursor-pointer mr-2"
+                       value="Salvar">
+                <div class="bg-gray-200 text-black px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                     onClick="handleCloseEditProposal()">Cancelar
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="deleteProposalModal" class="w-screen h-screen absolute top-0 left-0 hidden" >
+    <div onClick="hideDeleteProposalModal()" id="modalBackDropDelete" class="bg-black bg-opacity-50 w-full h-full absolute top-0 left-0 z-40"></div>
+    <form action="" class="bg-white pb-4 overflow-auto top-1/2 left-1/2 absolute transform z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-lg"
+          onSubmit="deleteProposal()">
+        <div class="sticky top-0">
+            <h1 class="bg-purple-contrast text-white px-4 py-2 font-semibold"> Excluir Proposta </h1>
+            <ion-icon name="close" fontSize='' class="text-2xl text-black absolute top-2 right-2 cursor-pointer hover:text-white-600 duration-150 ease-in-out text-white"
+                      onClick="hideDeleteProposalModal()"></ion-icon>
+        </div>
+        <div class="flex flex-col px-4">
+            <div class="flex items-center justify-center flex-col py-8">
+                <p class="text-xl font-bold">Deseja realmente excluir a proposta selecionada?</p>
+                <p class="text-sm text-gray-600">Essa ação não poderá ser desfeita.</p>
+            </div>
+            <div class="flex justify-end items-center w-full my-4">
+                <button type="button" class="bg-gray-200 text-black px-4 py-2 rounded-lg font-semibold mx-4 hover:bg-gray-300 duration-150 ease-in-out cursor-pointer"
+                        onClick="hideDeleteProposalModal()">Cancelar</button>
+                <input type="submit" class="bg-red-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-900 duration-150 ease-in-out cursor-pointer" value="Excluir" />
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<button class="fixed bottom-10 right-10 " onClick="handleCloseAddProposal()">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         class="h-16 w-16 text-white bg-purple-highlight p-2 rounded-2xl hover:bg-[#5f04c4] duration-150 ease-in-out"
+         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+    </svg>
+</button>
+</body>
+
+</html>
