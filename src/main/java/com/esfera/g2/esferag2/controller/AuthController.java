@@ -7,14 +7,11 @@ import com.esfera.g2.esferag2.repository.UserRepository;
 import com.esfera.g2.esferag2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
+@RestController
 public class AuthController {
 
     private final UserService userService;
@@ -74,35 +71,28 @@ public class AuthController {
         newUser.setRole(role);
         userService.save(newUser);
 
-
-        redirectAttributes.addFlashAttribute("success", "Usuário registrado com sucesso");
-        return "redirect:/login";
+        return "ok";
     }
 
 
     @PostMapping("/login")
-    public String loginUser(@RequestParam("email") String email,
-                            @RequestParam("password") String password,
+    public User loginUser(@RequestBody UserRegistrationRequest userRequest,
                             RedirectAttributes redirectAttributes) {
+        String email = userRequest.getEmail();
+        String password = userRequest.getPassword();
         User user = null;
-        if (email.isEmpty() || password.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Todos os campos devem ser preenchidos");
-            return "redirect:/login";
-        } else {
 
+        if (email.isEmpty() || password.isEmpty()) {
+            throw new UserRegistrationExeption("Todos os campos devem ser preenchidos");
+        } else {
             user = userService.findByEmail(email);
         }
         if (user == null) {
-            redirectAttributes.addFlashAttribute("error", "Usuário não encontrado");
-            return "redirect:/login";
+            throw new UserRegistrationExeption("Usuário não encontrado");
         } else if (!userService.checkPassword(password, user.getPasswordHash())) {
-            redirectAttributes.addFlashAttribute("error", "Senha incorreta");
-            return "redirect:/login";
+            throw new UserRegistrationExeption("Senha incorreta");
         } else {
-
-            redirectAttributes.addAttribute("userId", user.getIdUser());
-
-            return "redirect:/nav/dashboard";
+            return user;
         }
     }
 }
