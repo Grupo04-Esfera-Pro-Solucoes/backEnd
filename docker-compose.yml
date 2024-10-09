@@ -1,32 +1,58 @@
 version: '3.8'
 
 services:
-  # Serviço da aplicação Spring Boot
+  # Spring Boot Application Service
   app:
     build: .
     ports:
-      - "8080:8080" # Expor a porta 8080 do container para o host
+      - "8080:8080" # Expose port 8080 for the host
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/database
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     depends_on:
-      - db # Garantir que o banco de dados suba antes da aplicação
+      - db
+      - collector-api
     networks:
       - app-network
 
-  # Serviço do banco de dados MySQL
+  # MySQL Database Service
   db:
     image: mysql:8.0
     environment:
       MYSQL_DATABASE: database
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3306:3306"
+      - "3306:3306" # Expose port 3306 for the host
     networks:
       - app-network
     volumes:
-      - db-data:/var/lib/mysql # Persistir dados no volume
+      - db-data:/var/lib/mysql
+
+  # Jaeger Service for Tracing UI
+  jaeger-api:
+    image: jaegertracing/opentelemetry-all-in-one
+    container_name: jaeger-api
+    ports:
+      - "16686:16686" # Expose Jaeger UI
+    depends_on:
+      - collector-api
+    networks:
+      - app-network
+
+  # OpenTelemetry Collector Service
+  collector-api:
+    image: otel/opentelemetry-collector:latest
+    container_name: collector-api
+    volumes:
+      - ./otel-config.yaml:/etc/otel-collector-config.yaml:ro
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - app-network
+
 
 networks:
   app-network:
