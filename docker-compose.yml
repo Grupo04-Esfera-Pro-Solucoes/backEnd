@@ -50,9 +50,39 @@ services:
     ports:
       - "4317:4317"
       - "4318:4318"
+      - "8889:8889"
     networks:
       - app-network
 
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --enable-feature=exemplar-storage
+      - --web.enable-remote-write-receiver
+    restart: always
+    ports:
+      - '9090:9090'
+    depends_on:
+      - collector-api
+    networks:
+      - app-network
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    volumes:
+      - ./grafana/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
 
 networks:
   app-network:
