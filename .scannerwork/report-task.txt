@@ -1,0 +1,6 @@
+projectKey=Esfera
+serverUrl=http://localhost:9000
+serverVersion=10.7.0.96327
+dashboardUrl=http://localhost:9000/dashboard?id=Esfera
+ceTaskId=a6247d4f-4c1e-423a-b68b-bf137e113c03
+ceTaskUrl=http://localhost:9000/api/ce/task?id=a6247d4f-4c1e-423a-b68b-bf137e113c03
